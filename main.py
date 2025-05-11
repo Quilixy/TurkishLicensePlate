@@ -4,7 +4,7 @@ from ultralytics import YOLO
 import numpy as np
 import matplotlib.pyplot as plt
 
-model = YOLO("best.pt")  # kendi eğittiğin plaka modelini buraya koymalısın
+model = YOLO("best.pt") 
 
 # EasyOCR reader
 reader = easyocr.Reader(['en'])
@@ -26,7 +26,7 @@ for box in boxes:
     if plate_img.size == 0:
         continue
 
-    # Görüntü iyileştirme
+
     plate_img = cv2.resize(plate_img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
     gray = cv2.cvtColor(plate_img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
@@ -39,33 +39,33 @@ for box in boxes:
     sorted_text = sorted(ocr_result, key=lambda x: x[0][0][0])
     plate_text = " ".join([text for (_, text, prob) in sorted_text if prob > 0.3])
 
-    # ✅ Çerçeve ve yazı çizimi
+
     cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 3)  # Kırmızı çerçeve
     text_position = (x1, y1 - 15)
 
-    # Arka plan kutusu
+
     text_size, _ = cv2.getTextSize(plate_text, cv2.FONT_HERSHEY_SIMPLEX, 1.5, 3)
     text_w, text_h = text_size
     cv2.rectangle(frame, (text_position[0] - 5, text_position[1] - text_h - 10),
                   (text_position[0] + text_w + 5, text_position[1] + 10),
                   (0, 0, 0), -1)
 
-    # Yazıyı yaz
+  
     cv2.putText(frame, plate_text, text_position,
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (255, 255, 255), 3)
 
-# Ekrana sığdırmak için yeniden boyutlandır
+r
 max_width = 800
 h, w = frame.shape[:2]
 if w > max_width:
     scale = max_width / w
     frame = cv2.resize(frame, (int(w * scale), int(h * scale)))
 
-# BGR'yi RGB'ye dönüştür
+
 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-# Matplotlib ile görüntüleme
+
 plt.imshow(frame_rgb)
 plt.title("Plate Detection")
-plt.axis('off')  # Eksenleri kaldır
+plt.axis('off')  
 plt.show()
